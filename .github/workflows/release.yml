@@ -105,7 +105,7 @@ jobs:
         run: |
           NEW_VERSION='${{ steps.determine_version.outputs.NEW_VERSION }}'
           CHANGELOG='${{ steps.get_changelog.outputs.CHANGELOG }}'
-          CURRENT_DATE=$(TZ='America/Denver' date +%Y-%d-%m)
+          CURRENT_DATE=$(TZ='America/Denver' date +%Y-%m-%d)
           REPO_URL="https://github.com/joshuadanpeterson/vintage-typewriter-emulator"
 
           format_entry() {
@@ -126,12 +126,15 @@ jobs:
 
           if [ ! -f CHANGELOG.md ]; then
             echo "# Changelog" > CHANGELOG.md
+            echo >> CHANGELOG.md
+          elif ! grep -q "^# Changelog" CHANGELOG.md; then
+            sed -i '1i# Changelog\n' CHANGELOG.md
           fi
 
-          echo >> CHANGELOG.md
-
           # Add new version
-          format_entry "$NEW_VERSION" "$CURRENT_DATE" "$CHANGELOG" "${{ steps.determine_version.outputs.LATEST_TAG }}" >> CHANGELOG.md
+          NEW_ENTRY=$(format_entry "$NEW_VERSION" "$CURRENT_DATE" "$CHANGELOG" "${{ steps.determine_version.outputs.LATEST_TAG }}")
+          echo "$NEW_ENTRY" > temp_changelog.md
+          echo >> temp_changelog.md
 
           prev_version="$NEW_VERSION"
           declare -A processed_versions
@@ -163,6 +166,9 @@ jobs:
           done < CHANGELOG.md
 
           mv temp_changelog.md CHANGELOG.md
+
+          echo "Updated CHANGELOG.md contents:"
+          cat CHANGELOG.md
 
           if ! grep -q "^# Changelog" CHANGELOG.md || ! grep -q "^## \[v[0-9]\+\.[0-9]\+\.[0-9]\+\]" CHANGELOG.md; then
             echo "Error: CHANGELOG.md formatting verification failed"
