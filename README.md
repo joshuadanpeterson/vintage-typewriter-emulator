@@ -1,51 +1,78 @@
-Typewriter sounds emulator for Python
-=====================================
+# Vintage Typewriter Emulator
 
-This program plays typewriter sounds each time a key is pressed, giving
-the user the vintage experience of and old typewriter machine.
+Vintage Typewriter Emulator is a Python program that emulates the sound of a typewriter as you type. This project is a fork of the Typewriter Sounds Emulator, taking a new direction by enhancing the key mapping and sound playback to provide a more immersive vintage typewriter experience.
 
-The code is inspired on the keylogger demo that comes in the The Python
-X Library ( <http://python-xlib.sourceforge.net/> ). The logic is
-simple: grab the keycode of a pressed key, and instead to record it (as
-any keylogger does), just play a sound.
+## Table of Contents
 
-As the key detection is made using Xlib, this program should work on
-those platforms that support X11. It was developed and tested under
-Linux.
+- [Features](#features)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Key Mapping](#key-mapping)
+- [Acknowledgements](#acknowledgements)
+- [License](#license)
 
-Sound samples come from <https://www.freesound.org/>, some were modified
-for this project.
+## Features
 
-Requeriments
-------------
+- **Enhanced Key Mapping**: This fork has improved key mappings to include a wider range of keys and modes in Vim, ensuring each keypress triggers an appropriate sound.
+- **Custom Sounds**: Plays specific sounds for different keys, such as space, enter, backspace, and more.
+- **Mode-Specific Sounds**: Different sounds for keys depending on the mode in Vim (normal, insert, visual, etc.).
+- **Bell Sound**: Plays a bell sound when the program starts and when the enter key is pressed in insert mode.
 
--   Python 2.7 (but should work with 3.5)
--   [X11 and Xlib bindings for Python](http://python-xlib.sourceforge.net/)
--   [PyGame](http://pygame.org) (for sound)
+## Requirements
 
-Usage
------
+- Python 3.6 or higher
 
-cd into the project's directory and type:
+## Installation
 
-    $ python typewriter_sounds.py
+1. **Clone the Repository**:
 
-to stop the program, just type CTRL-C.
+   ```bash
+   git clone https://github.com/joshuadanpeterson/vintage-typewriter-emulator.git
+   cd vintage-typewriter-emulator
+   ```
 
-TODO
-----
+2. **Install Dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
--   Test it in different platforms. In Windows it should work using
-    Cygwin
--   Add an installer
--   Eventually: add a tray icon GUI.
+## Usage
 
-Author
-------
+1. **Run the Program**:
 
-Manuel Arturo Izquierdo <aizquier@gmail.com>
+   ```bash
+   python typewriter_sounds.py
+   ```
 
+   This will start the Vintage Typewriter Emulator. You should hear a bell sound indicating the program has started.
 
-Note
-----
->For python2 versions add the ord(reply.data[0]) in line number 142 instead of reply.data[0]
+2. **Type in Your Editor**:
+
+   - Ensure your text editor or terminal window is focused.
+   - Type normally and enjoy the vintage typewriter sounds!
+
+3. **Exit the Program**:
+   - Press `Ctrl-C` to exit the program gracefully. A message will be displayed indicating the program has ended.
+
+## Key Mapping
+
+The program maps specific sounds to different keys as follows:
+
+- **Space Key**: Plays `manual_space.wav`
+- **Backspace Key**: Plays `manual_backspace.wav`
+- **Bell Sound**: Plays `manual_bell.wav` on startup and when enter key is pressed in insert mode
+- **Enter Key**: Plays `manual_return.wav` and `manual_feed.wav`
+- **Default Key Sound**: Plays `manual_key.wav`
+- **Page Up, Page Down, Home, End Keys**: Plays `manual_load_long.wav`
+- **Shift Key, Arrow Keys, Escape Key, 'i' and 'a' in Normal Mode, and Number Keys in Normal Mode**: Plays `manual_shift.wav`
+
+## Acknowledgements
+
+- Original project by Manuel Arturo Izquierdo (aizquier@gmail.com)
+- Forked from the [Typewriter Sounds Emulator](https://github.com/akshith6212/typewriter-sounds) project
+- Sound samples sourced from [freesound.org](https://www.freesound.org/), some of which have been modified for this project.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
