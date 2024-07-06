@@ -1,6 +1,13 @@
+# typewriter_sounds.py - A typewriter sounds emulator
+
 from __future__ import print_function
 import sys
 import os
+import signal
+
+# Suppress the pygame startup message
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
+
 import pygame
 from pynput import keyboard
 
@@ -18,6 +25,8 @@ class TypeWriterSounds:
             "enter": pygame.mixer.Sound("samples/manual_return.wav"),
             "bell": pygame.mixer.Sound("samples/manual_bell.wav"),
         }
+        print("Typewriter Sounds Emulator. v1.0")
+        print("Type now and enjoy the vintage experience! Press Ctrl-C to exit.")
 
     def play_sound(self, keyname, mode):
         if mode in ("normal", "visual", "operator_pending"):
@@ -183,9 +192,20 @@ class TypeWriterSounds:
     def start_listener(self):
         listener = keyboard.Listener(on_press=self.on_press)
         listener.start()
-        listener.join()
+        try:
+            listener.join()
+        except KeyboardInterrupt:
+            print("\nProgram ended. Goodbye!")
+            listener.stop()
+            sys.exit(0)
+
+
+def handle_sigint(signum, frame):
+    print("\nProgram ended. Goodbye!")
+    sys.exit(0)
 
 
 if __name__ == "__main__":
+    signal.signal(signal.SIGINT, handle_sigint)
     sounds = TypeWriterSounds()
     sounds.start_listener()
