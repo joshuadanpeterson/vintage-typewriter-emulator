@@ -16,27 +16,28 @@ class TypeWriterSounds:
     def __init__(self):
         pygame.mixer.init(buffer=512)
         self.keysounds = {
-            "load": pygame.mixer.Sound("samples/manual_load_long.wav"),
-            "shift": pygame.mixer.Sound("samples/manual_shift.wav"),
-            "delete": pygame.mixer.Sound("samples/manual_backspace.wav"),
             "space": pygame.mixer.Sound("samples/manual_space.wav"),
-            "key": pygame.mixer.Sound("samples/manual_key.wav"),
-            "enter": pygame.mixer.Sound("samples/manual_return.wav"),
+            "backspace": pygame.mixer.Sound("samples/manual_backspace.wav"),
             "bell": pygame.mixer.Sound("samples/manual_bell.wav"),
+            "feed": pygame.mixer.Sound("samples/manual_feed.wav"),
+            "key": pygame.mixer.Sound("samples/manual_key.wav"),
+            "load": pygame.mixer.Sound("samples/manual_load_long.wav"),
+            "enter": pygame.mixer.Sound("samples/manual_return.wav"),
+            "shift": pygame.mixer.Sound("samples/manual_shift.wav"),
         }
         print("Typewriter Sounds Emulator")
         print("Type now and enjoy the vintage experience! Press Ctrl-C to exit.")
         self.keysounds["bell"].play()  # Play bell sound on startup
 
     def play_sound(self, keyname, mode):
-        if keyname == "enter":
+        if keyname in ("enter", "return"):
             self.keysounds["enter"].play()
         elif keyname == "space":
             self.keysounds["space"].play()
-        elif keyname == "backspace":
-            self.keysounds["delete"].play()
-        elif keyname in ("esc", "up", "down", "left", "right") or (
-            mode == "normal" and keyname in ("i", "a")
+        elif keyname in ("backspace", "delete"):
+            self.keysounds["backspace"].play()
+        elif keyname in ("esc", "up", "down", "left", "right", "tab") or (
+            mode == "normal" and (keyname in ("i", "a") or keyname.isdigit())
         ):
             self.keysounds["shift"].play()
         elif mode in ("normal", "visual", "operator_pending"):
@@ -89,8 +90,8 @@ class TypeWriterSounds:
         if keyname in ("o", "O"):
             self.keysounds["enter"].play()
             self.keysounds["bell"].play()
-        elif keyname == "delete":
-            self.keysounds["delete"].play()
+        elif keyname in ("delete", "backspace"):
+            self.keysounds["backspace"].play()
         elif keyname in (
             "up",
             "down",
@@ -127,49 +128,72 @@ class TypeWriterSounds:
 
     def on_press(self, key):
         try:
-            keyname = key.char if key.char else key.name
+            if hasattr(key, "char"):
+                keyname = key.char
+            else:
+                keyname = key.name
+
+            if key == keyboard.Key.space:
+                keyname = "space"
+            elif key == keyboard.Key.enter:
+                keyname = "enter"
+            elif key == keyboard.Key.backspace:
+                keyname = "backspace"
+            elif key == keyboard.Key.tab:
+                keyname = "tab"
+            elif key in (
+                keyboard.Key.up,
+                keyboard.Key.down,
+                keyboard.Key.left,
+                keyboard.Key.right,
+            ):
+                keyname = key.name
 
             # Determine mode based on key pressed
-            if keyname in (
-                "h",
-                "j",
-                "k",
-                "l",
-                "W",
-                "w",
-                "e",
-                "E",
-                "b",
-                "B",
-                "0",
-                "$",
-                "gg",
-                "G",
-                "H",
-                "M",
-                "L",
-                "zz",
-                "zb",
-                "zt",
-                "ge",
-                "gE",
-                "/",
-                "?",
-                "n",
-                "N",
-                "*",
-                "#",
-                "aw",
-                "iw",
-                "as",
-                "is",
-                "ap",
-                "ip",
-                "a[",
-                "i[",
-                "%",
-                "i",
-                "a",
+            if (
+                keyname
+                in (
+                    "h",
+                    "j",
+                    "k",
+                    "l",
+                    "W",
+                    "w",
+                    "e",
+                    "E",
+                    "b",
+                    "B",
+                    "0",
+                    "$",
+                    "gg",
+                    "G",
+                    "H",
+                    "M",
+                    "L",
+                    "zz",
+                    "zb",
+                    "zt",
+                    "ge",
+                    "gE",
+                    "/",
+                    "?",
+                    "n",
+                    "N",
+                    "*",
+                    "#",
+                    "aw",
+                    "iw",
+                    "as",
+                    "is",
+                    "ap",
+                    "ip",
+                    "a[",
+                    "i[",
+                    "%",
+                    "i",
+                    "a",
+                )
+                or keyname.isdigit()
             ):
                 mode = "normal"
             elif keyname in ("V", "<C-v>"):
@@ -195,14 +219,12 @@ class TypeWriterSounds:
         try:
             listener.join()
         except KeyboardInterrupt:
-            self.keysounds["bell"].play()  # Play bell sound on exit
             print("\nProgram ended. Goodbye!")
             listener.stop()
             sys.exit(0)
 
 
 def handle_sigint(signum, frame):
-    sounds.keysounds["bell"].play()  # Play bell sound on exit
     print("\nProgram ended. Goodbye!")
     sys.exit(0)
 
