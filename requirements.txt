@@ -1,3 +1,2 @@
-python-xlib
-python3-xlib
 pygame
+pynput
