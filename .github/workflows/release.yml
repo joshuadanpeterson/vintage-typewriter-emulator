@@ -124,11 +124,14 @@ jobs:
             echo "$1" | awk '!seen[$0]++'
           }
 
-          echo "# Changelog" > temp_changelog.md
-          echo >> temp_changelog.md
+          if [ ! -f CHANGELOG.md ]; then
+            echo "# Changelog" > CHANGELOG.md
+          fi
+
+          echo >> CHANGELOG.md
 
           # Add new version
-          format_entry "$NEW_VERSION" "$CURRENT_DATE" "$CHANGELOG" "${{ steps.determine_version.outputs.LATEST_TAG }}" >> temp_changelog.md
+          format_entry "$NEW_VERSION" "$CURRENT_DATE" "$CHANGELOG" "${{ steps.determine_version.outputs.LATEST_TAG }}" >> CHANGELOG.md
 
           prev_version="$NEW_VERSION"
           declare -A processed_versions
