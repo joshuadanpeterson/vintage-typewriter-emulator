@@ -15,7 +15,6 @@ from pynput import keyboard
 class TypeWriterSounds:
     def __init__(self):
         pygame.mixer.init(buffer=512)
-        self.bellcount = 0
         self.keysounds = {
             "load": pygame.mixer.Sound("samples/manual_load_long.wav"),
             "shift": pygame.mixer.Sound("samples/manual_shift.wav"),
@@ -25,11 +24,22 @@ class TypeWriterSounds:
             "enter": pygame.mixer.Sound("samples/manual_return.wav"),
             "bell": pygame.mixer.Sound("samples/manual_bell.wav"),
         }
-        print("Typewriter Sounds Emulator. v1.0")
+        print("Typewriter Sounds Emulator")
         print("Type now and enjoy the vintage experience! Press Ctrl-C to exit.")
+        self.keysounds["bell"].play()  # Play bell sound on startup
 
     def play_sound(self, keyname, mode):
-        if mode in ("normal", "visual", "operator_pending"):
+        if keyname == "enter":
+            self.keysounds["enter"].play()
+        elif keyname == "space":
+            self.keysounds["space"].play()
+        elif keyname == "backspace":
+            self.keysounds["delete"].play()
+        elif keyname in ("esc", "up", "down", "left", "right") or (
+            mode == "normal" and keyname in ("i", "a")
+        ):
+            self.keysounds["shift"].play()
+        elif mode in ("normal", "visual", "operator_pending"):
             if keyname in (
                 "h",
                 "j",
@@ -76,18 +86,11 @@ class TypeWriterSounds:
             self.play_default_sound(keyname)
 
     def play_default_sound(self, keyname):
-        if keyname in ("enter", "o", "O"):
+        if keyname in ("o", "O"):
             self.keysounds["enter"].play()
-            self.bellcount = 0
             self.keysounds["bell"].play()
-        elif keyname == "space":
-            self.keysounds["space"].play()
-            self.bellcount += 1
-        elif keyname in ("delete", "backspace"):
+        elif keyname == "delete":
             self.keysounds["delete"].play()
-            self.bellcount -= 1
-            if self.bellcount <= 0:
-                self.bellcount = 0
         elif keyname in (
             "up",
             "down",
@@ -121,11 +124,6 @@ class TypeWriterSounds:
             self.keysounds["load"].play()
         else:
             self.keysounds["key"].play()
-            self.bellcount += 1
-
-        if self.bellcount == 70:
-            self.keysounds["bell"].play()
-            self.bellcount = 0
 
     def on_press(self, key):
         try:
@@ -170,6 +168,8 @@ class TypeWriterSounds:
                 "a[",
                 "i[",
                 "%",
+                "i",
+                "a",
             ):
                 mode = "normal"
             elif keyname in ("V", "<C-v>"):
@@ -195,12 +195,14 @@ class TypeWriterSounds:
         try:
             listener.join()
         except KeyboardInterrupt:
+            self.keysounds["bell"].play()  # Play bell sound on exit
             print("\nProgram ended. Goodbye!")
             listener.stop()
             sys.exit(0)
 
 
 def handle_sigint(signum, frame):
+    sounds.keysounds["bell"].play()  # Play bell sound on exit
     print("\nProgram ended. Goodbye!")
     sys.exit(0)
 
