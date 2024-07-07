@@ -1,5 +1,10 @@
 # Changelog
 
+## [v0.1.1](https://github.com/joshuadanpeterson/vintage-typewriter-emulator/tree/v0.1.1) (2024-07-06)
+- Merge pull request #1 from joshuadanpeterson/dev
+- docs: update CHANGELOG.md for v0.1.0
+
+[Full Changelog](https://github.com/joshuadanpeterson/vintage-typewriter-emulator/compare/v0.1.0...v0.1.1)
 ## [v0.1.0](https://github.com/joshuadanpeterson/vintage-typewriter-emulator/tree/v0.1.0) (2024-07-06)
 - ci(workflow): ensure CHANGELOG.md always starts with header
 - ci(workflow): fix CHANGELOG.md header and entry processing
